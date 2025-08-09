@@ -34,6 +34,7 @@ distributed data store.
    ```bash
    curl -X POST \
         "http://localhost:8080/events/1/seats/1/reserve?customer=Alice"
+
    ```
 
    On success, the service returns a JSON representation of the created
