@@ -4,11 +4,15 @@ import com.example.ticketing.model.Event;
 import com.example.ticketing.model.Seat;
 import com.example.ticketing.repository.EventRepository;
 import com.example.ticketing.repository.SeatRepository;
-import org.springframework.boot.CommandLineRunner;
+import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DataInitializer implements CommandLineRunner {
+public class DataInitializer {
+=======
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
 
     private final EventRepository eventRepository;
     private final SeatRepository seatRepository;
@@ -18,18 +22,12 @@ public class DataInitializer implements CommandLineRunner {
         this.seatRepository = seatRepository;
     }
 
-    @Override
-    public void run(String... args) {
-        Event event = new Event(1L, "Sample Event");
+    @PostConstruct
+    public void init() {
+        Event event = new Event(1L, "Demo Event");
         eventRepository.save(event);
+        seatRepository.save(new Seat(1L, 1L, "A1", false));
+        seatRepository.save(new Seat(2L, 1L, "A2", false));
 
-        Seat seat = new Seat(1L, event.getId(), "A1", false);
-        seatRepository.save(seat);
-
-        // Verify seeding by fetching the seat
-        Seat fetched = seatRepository.findById(seat.getId());
-        if (fetched != null) {
-            System.out.println("Seeded seat: " + fetched.getNumber() + " for event " + fetched.getEventId());
-        }
     }
 }
