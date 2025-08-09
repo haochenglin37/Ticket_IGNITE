@@ -29,17 +29,30 @@ distributed data store.
    ```
 
 2. Sample data for one demo event with two seats is loaded at startup. Use
-   the REST endpoint to reserve a seat. Example using `curl`:
+   the REST endpoints to manage seats.
+
+   Reserve a seat:
+
 
    ```bash
    curl -X POST \
         "http://localhost:8080/events/1/seats/1/reserve?customer=Alice"
-
    ```
 
-   On success, the service returns a JSON representation of the created
-   ticket. Attempting to reserve an already-reserved seat or specifying a
-   wrong `eventId` yields an error response.
+   Check seat status:
+
+   ```bash
+   curl "http://localhost:8080/events/1/seats/1"
+   ```
+
+   Cancel a reservation:
+
+   ```bash
+   curl -X POST "http://localhost:8080/events/1/seats/1/cancel"
+   ```
+
+   On success, the service returns a JSON representation of the seat or
+   ticket. Invalid operations yield an error response.
 
 3. A simple web page is available for manual testing:
 
@@ -48,6 +61,8 @@ distributed data store.
    ```
 
    Enter the event ID, seat ID and customer name to attempt a reservation.
+   Additional forms allow checking seat status and canceling a reservation.
+
 
 ## Running tests
 

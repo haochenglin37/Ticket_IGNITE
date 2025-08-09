@@ -5,6 +5,9 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.springframework.stereotype.Repository;
 
+
+import javax.cache.Cache;
+
 @Repository
 public class TicketRepository {
 
@@ -20,5 +23,19 @@ public class TicketRepository {
 
     public Ticket findById(Long id) {
         return cache.get(id);
+    }
+
+    public void delete(Long id) {
+        cache.remove(id);
+    }
+
+    public Ticket findByEventIdAndSeatId(Long eventId, Long seatId) {
+        for (Cache.Entry<Long, Ticket> entry : cache) {
+            Ticket ticket = entry.getValue();
+            if (ticket.getEventId().equals(eventId) && ticket.getSeatId().equals(seatId)) {
+                return ticket;
+            }
+        }
+        return null;
     }
 }

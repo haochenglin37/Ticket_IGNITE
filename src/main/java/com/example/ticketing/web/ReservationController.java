@@ -1,11 +1,10 @@
 package com.example.ticketing.web;
 
+import com.example.ticketing.model.Seat;
 import com.example.ticketing.model.Ticket;
 import com.example.ticketing.service.ReservationService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 public class ReservationController {
@@ -21,5 +20,17 @@ public class ReservationController {
                               @PathVariable Long seatId,
                               @RequestParam String customer) {
         return reservationService.reserveSeat(eventId, seatId, customer);
+    }
+
+    @GetMapping("/events/{eventId}/seats/{seatId}")
+    public Seat getSeat(@PathVariable Long eventId,
+                        @PathVariable Long seatId) {
+        return reservationService.getSeat(eventId, seatId);
+    }
+
+    @PostMapping("/events/{eventId}/seats/{seatId}/cancel")
+    public Seat cancelSeat(@PathVariable Long eventId,
+                           @PathVariable Long seatId) {
+        return reservationService.cancelSeat(eventId, seatId);
     }
 }

@@ -69,4 +69,29 @@ class ReservationServiceTest {
         verify(seatRepository, never()).save(any());
         verify(ticketRepository, never()).save(any());
     }
+
+    @Test
+    void cancelSeatSuccessful() {
+        Seat seat = new Seat(1L, 1L, "A1", true);
+        Ticket ticket = new Ticket(5L, 1L, 1L, "Alice");
+        when(seatRepository.findById(1L)).thenReturn(seat);
+        when(ticketRepository.findByEventIdAndSeatId(1L, 1L)).thenReturn(ticket);
+
+        Seat result = reservationService.cancelSeat(1L, 1L);
+
+        assertFalse(result.isReserved());
+        verify(seatRepository).save(seat);
+        verify(ticketRepository).delete(5L);
+    }
+
+    @Test
+    void cancelSeatNotReservedThrows() {
+        Seat seat = new Seat(1L, 1L, "A1", false);
+        when(seatRepository.findById(1L)).thenReturn(seat);
+
+        assertThrows(IllegalStateException.class, () -> reservationService.cancelSeat(1L, 1L));
+
+        verify(seatRepository, never()).save(any());
+        verify(ticketRepository, never()).delete(anyLong());
+    }
 }

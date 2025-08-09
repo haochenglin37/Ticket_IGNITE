@@ -1,5 +1,6 @@
 package com.example.ticketing.web;
 
+import com.example.ticketing.model.Seat;
 import com.example.ticketing.model.Ticket;
 import com.example.ticketing.service.ReservationService;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,6 +46,35 @@ class ReservationControllerTest {
         mockMvc.perform(post("/events/1/seats/1/reserve")
                 .param("customer", "Alice")
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void getSeatReturnsSeat() throws Exception {
+        Seat seat = new Seat(1L, 1L, "A1", false);
+        when(reservationService.getSeat(1L, 1L)).thenReturn(seat);
+
+        mockMvc.perform(get("/events/1/seats/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.reserved").value(false));
+    }
+
+    @Test
+    void cancelSeatReturnsSeat() throws Exception {
+        Seat seat = new Seat(1L, 1L, "A1", false);
+        when(reservationService.cancelSeat(1L, 1L)).thenReturn(seat);
+
+        mockMvc.perform(post("/events/1/seats/1/cancel"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.reserved").value(false));
+    }
+
+    @Test
+    void cancelSeatReturnsError() throws Exception {
+        when(reservationService.cancelSeat(1L, 1L)).thenThrow(new IllegalStateException("Seat not reserved"));
+
+        mockMvc.perform(post("/events/1/seats/1/cancel"))
                 .andExpect(status().isInternalServerError());
     }
 }

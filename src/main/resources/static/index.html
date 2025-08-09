@@ -13,6 +13,22 @@
     <button type="submit">Reserve</button>
 </form>
 <pre id="result"></pre>
+<h2>Check Seat</h2>
+<form id="checkForm">
+    <label>Event ID: <input type="number" id="checkEventId" required></label><br>
+    <label>Seat ID: <input type="number" id="checkSeatId" required></label><br>
+    <button type="submit">Check</button>
+    </form>
+<pre id="checkResult"></pre>
+
+<h2>Cancel Reservation</h2>
+<form id="cancelForm">
+    <label>Event ID: <input type="number" id="cancelEventId" required></label><br>
+    <label>Seat ID: <input type="number" id="cancelSeatId" required></label><br>
+    <button type="submit">Cancel</button>
+</form>
+<pre id="cancelResult"></pre>
+
 <script>
 document.getElementById('reservationForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -35,6 +51,47 @@ document.getElementById('reservationForm').addEventListener('submit', async func
         result.textContent = 'Error: ' + err.message;
     }
 });
+
+document.getElementById('checkForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const eventId = document.getElementById('checkEventId').value;
+    const seatId = document.getElementById('checkSeatId').value;
+    const result = document.getElementById('checkResult');
+    result.textContent = 'Checking...';
+    try {
+        const response = await fetch(`/events/${eventId}/seats/${seatId}`);
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const seat = await response.json();
+        result.textContent = JSON.stringify(seat, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+
+document.getElementById('cancelForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const eventId = document.getElementById('cancelEventId').value;
+    const seatId = document.getElementById('cancelSeatId').value;
+    const result = document.getElementById('cancelResult');
+    result.textContent = 'Cancelling...';
+    try {
+        const response = await fetch(`/events/${eventId}/seats/${seatId}/cancel`, {
+            method: 'POST'
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const seat = await response.json();
+        result.textContent = JSON.stringify(seat, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+
 </script>
 </body>
 </html>

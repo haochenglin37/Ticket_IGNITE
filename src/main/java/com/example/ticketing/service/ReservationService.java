@@ -35,4 +35,26 @@ public class ReservationService {
         ticketRepository.save(ticket);
         return ticket;
     }
+
+    public Seat getSeat(Long eventId, Long seatId) {
+        Seat seat = seatRepository.findById(seatId);
+        if (seat == null || !seat.getEventId().equals(eventId)) {
+            throw new IllegalStateException("Seat not found");
+        }
+        return seat;
+    }
+
+    public Seat cancelSeat(Long eventId, Long seatId) {
+        Seat seat = seatRepository.findById(seatId);
+        if (seat == null || !seat.getEventId().equals(eventId) || !seat.isReserved()) {
+            throw new IllegalStateException("Seat not reserved");
+        }
+        seat.setReserved(false);
+        seatRepository.save(seat);
+        Ticket ticket = ticketRepository.findByEventIdAndSeatId(eventId, seatId);
+        if (ticket != null) {
+            ticketRepository.delete(ticket.getId());
+        }
+        return seat;
+    }
 }
