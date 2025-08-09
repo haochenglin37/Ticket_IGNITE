@@ -9,10 +9,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataInitializer {
-=======
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-
 
     private final EventRepository eventRepository;
     private final SeatRepository seatRepository;
