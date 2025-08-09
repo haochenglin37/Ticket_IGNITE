@@ -13,7 +13,7 @@ distributed data store.
 1. Start the Spring Boot application, which will also start an embedded
    Ignite node:
 
-   ```bash
+
    mvn spring-boot:run -Dspring-boot.run.jvmArguments="\
    --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED \
    --add-opens=java.base/java.nio=ALL-UNNAMED \
@@ -26,7 +26,6 @@ distributed data store.
    --add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED \
    -Djava.net.preferIPv4Stack=true \
    -Xms512m -Xmx512m"
-   ```
 
 2. Reserve a seat by calling the REST endpoint. Example using `curl`:
 
