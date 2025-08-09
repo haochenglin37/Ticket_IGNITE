@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataInitializer {
+=======
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+
     private final EventRepository eventRepository;
     private final SeatRepository seatRepository;
 
@@ -23,5 +28,6 @@ public class DataInitializer {
         eventRepository.save(event);
         seatRepository.save(new Seat(1L, 1L, "A1", false));
         seatRepository.save(new Seat(2L, 1L, "A2", false));
+
     }
 }
