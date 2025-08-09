@@ -33,6 +33,7 @@ distributed data store.
 
    Reserve a seat:
 
+
    ```bash
    curl -X POST \
         "http://localhost:8080/events/1/seats/1/reserve?customer=Alice"
@@ -61,6 +62,7 @@ distributed data store.
 
    Enter the event ID, seat ID and customer name to attempt a reservation.
    Additional forms allow checking seat status and canceling a reservation.
+
 
 ## Running tests
 

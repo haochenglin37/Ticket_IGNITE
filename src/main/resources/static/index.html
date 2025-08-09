@@ -13,7 +13,6 @@
     <button type="submit">Reserve</button>
 </form>
 <pre id="result"></pre>
-
 <h2>Check Seat</h2>
 <form id="checkForm">
     <label>Event ID: <input type="number" id="checkEventId" required></label><br>
@@ -29,6 +28,7 @@
     <button type="submit">Cancel</button>
 </form>
 <pre id="cancelResult"></pre>
+
 <script>
 document.getElementById('reservationForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -91,6 +91,7 @@ document.getElementById('cancelForm').addEventListener('submit', async function(
         result.textContent = 'Error: ' + err.message;
     }
 });
+
 </script>
 </body>
 </html>
