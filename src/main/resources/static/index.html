@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Reservation</title>
+</head>
+<body>
+<h1>Reserve a Seat</h1>
+<form id="reservationForm">
+    <label>Event ID: <input type="number" id="eventId" required></label><br>
+    <label>Seat ID: <input type="number" id="seatId" required></label><br>
+    <label>Customer: <input type="text" id="customer" required></label><br>
+    <button type="submit">Reserve</button>
+</form>
+<pre id="result"></pre>
+<script>
+document.getElementById('reservationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const eventId = document.getElementById('eventId').value;
+    const seatId = document.getElementById('seatId').value;
+    const customer = document.getElementById('customer').value;
+    const result = document.getElementById('result');
+    result.textContent = 'Reserving...';
+    try {
+        const response = await fetch(`/events/${eventId}/seats/${seatId}/reserve?customer=${encodeURIComponent(customer)}`, {
+            method: 'POST'
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const ticket = await response.json();
+        result.textContent = JSON.stringify(ticket, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+</script>
+</body>
+</html>
