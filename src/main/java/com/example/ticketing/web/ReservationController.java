@@ -3,8 +3,10 @@ package com.example.ticketing.web;
 import com.example.ticketing.model.Seat;
 import com.example.ticketing.model.Ticket;
 import com.example.ticketing.service.ReservationService;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
 
 @RestController
 public class ReservationController {
@@ -18,19 +20,14 @@ public class ReservationController {
     @PostMapping("/events/{eventId}/seats/{seatId}/reserve")
     public Ticket reserveSeat(@PathVariable Long eventId,
                               @PathVariable Long seatId,
-                              @RequestParam String customer) {
-        return reservationService.reserveSeat(eventId, seatId, customer);
+                              Authentication authentication) {
+        return reservationService.reserveSeat(eventId, seatId, authentication.getName());
     }
 
     @GetMapping("/events/{eventId}/seats/{seatId}")
     public Seat getSeat(@PathVariable Long eventId,
                         @PathVariable Long seatId) {
         return reservationService.getSeat(eventId, seatId);
-    }
-
-    @GetMapping("/events/{eventId}/seats")
-    public List<Seat> getSeats(@PathVariable Long eventId) {
-        return reservationService.getSeatsByEvent(eventId);
     }
 
     @PostMapping("/events/{eventId}/seats/{seatId}/cancel")

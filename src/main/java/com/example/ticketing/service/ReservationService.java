@@ -5,6 +5,7 @@ import com.example.ticketing.model.Ticket;
 import com.example.ticketing.repository.SeatRepository;
 import com.example.ticketing.repository.TicketRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -44,10 +45,6 @@ public class ReservationService {
         return seat;
     }
 
-    public List<Seat> getSeatsByEvent(Long eventId) {
-        return seatRepository.findByEventId(eventId);
-    }
-
     public Seat cancelSeat(Long eventId, Long seatId) {
         Seat seat = seatRepository.findById(seatId);
         if (seat == null || !seat.getEventId().equals(eventId) || !seat.isReserved()) {
@@ -60,5 +57,22 @@ public class ReservationService {
             ticketRepository.delete(ticket.getId());
         }
         return seat;
+    }
+
+    public List<Ticket> getTicketsForCustomer(String customer) {
+        return ticketRepository.findByCustomer(customer);
+    }
+
+    public void cancelTicket(Long ticketId, String customer) {
+        Ticket ticket = ticketRepository.findById(ticketId);
+        if (ticket == null || !customer.equals(ticket.getCustomer())) {
+            throw new IllegalStateException("Ticket not found");
+        }
+        Seat seat = seatRepository.findById(ticket.getSeatId());
+        if (seat != null) {
+            seat.setReserved(false);
+            seatRepository.save(seat);
+        }
+        ticketRepository.delete(ticketId);
     }
 }

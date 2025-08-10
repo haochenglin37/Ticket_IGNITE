@@ -3,18 +3,22 @@ package com.example.ticketing.repository;
 import com.example.ticketing.model.Seat;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
-import org.springframework.stereotype.Repository;
+import org.apache.ignite.atomic.IgniteAtomicSequence;
+import org.apache.ignite.cache.query.ScanQuery;
 import javax.cache.Cache;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class SeatRepository {
 
     private final IgniteCache<Long, Seat> cache;
+    private final IgniteAtomicSequence idSeq;
 
     public SeatRepository(Ignite ignite) {
         this.cache = ignite.getOrCreateCache("seats");
+        this.idSeq = ignite.atomicSequence("seatIds", 0, true);
     }
 
     public void save(Seat seat) {
@@ -25,14 +29,14 @@ public class SeatRepository {
         return cache.get(id);
     }
 
+    public long nextId() {
+        return idSeq.incrementAndGet();
+    }
+
     public List<Seat> findByEventId(Long eventId) {
-        List<Seat> seats = new ArrayList<>();
-        for (Cache.Entry<Long, Seat> entry : cache) {
-            Seat seat = entry.getValue();
-            if (seat.getEventId().equals(eventId)) {
-                seats.add(seat);
-            }
-        }
-        return seats;
+        return cache.query(new ScanQuery<Long, Seat>((k, v) -> v.getEventId().equals(eventId)))
+                .getAll().stream()
+                .map(Cache.Entry::getValue)
+                .collect(Collectors.toList());
     }
 }

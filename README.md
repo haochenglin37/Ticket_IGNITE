@@ -10,6 +10,8 @@ distributed data store.
 - Spring Boot 2.7.18
 - Apache Ignite 2.15
 - REST + JSON
+- HTTP Basic authentication
+
 - Maven for build
 - JUnit 5 for tests
 
@@ -56,31 +58,46 @@ ticketing-ignite/
    -Xms512m -Xmx512m"
    ```
 
-2. Sample data for one demo event with two seats is loaded at startup. Use
-   the REST endpoints to manage seats.
+2. Sample data for one demo event with two seats is loaded at startup. A default admin user (`admin` / `admin`) is created. Register a regular account before accessing user endpoints:
+
+   ```bash
+   curl -H "Content-Type: application/json" -d '{"username":"user","password":"password"}' http://localhost:8080/register
+   ```
 
    Reserve a seat:
 
-
    ```bash
-   curl -X POST \
-        "http://localhost:8080/events/1/seats/1/reserve?customer=Alice"
+   curl -u user:password -X POST "http://localhost:8080/events/1/seats/1/reserve"
    ```
 
-   Check seat status:
+   List your tickets:
 
    ```bash
-   curl "http://localhost:8080/events/1/seats/1"
+   curl -u user:password "http://localhost:8080/me/tickets"
    ```
 
-   Cancel a reservation:
+   Cancel a ticket:
 
    ```bash
-   curl -X POST "http://localhost:8080/events/1/seats/1/cancel"
+   curl -u user:password -X DELETE "http://localhost:8080/me/tickets/{ticketId}"
    ```
 
    On success, the service returns a JSON representation of the seat or
    ticket. Invalid operations yield an error response.
+
+
+   Admin endpoints allow creating events and managing seats:
+
+   ```bash
+   curl -u admin:admin -H "Content-Type: application/json" \
+     -d '{"name":"Concert","seatCount":5}' \
+     -X POST "http://localhost:8080/admin/events"
+
+   curl -u admin:admin "http://localhost:8080/admin/events/1/seats"
+
+   curl -u admin:admin -H "Content-Type: application/json" \
+     -d '{"reserved":false}' -X PUT "http://localhost:8080/admin/seats/{seatId}"
+   ```
 
 3. A simple web page is available for manual testing:
 
@@ -88,8 +105,8 @@ ticketing-ignite/
    http://localhost:8080/index.html
    ```
 
-   Enter the event ID, seat ID and customer name to attempt a reservation.
-   Additional forms allow checking seat status and canceling a reservation.
+   Use the login form first, then manage reservations through the provided
+   forms to reserve seats, view your tickets and cancel them.
 
 
 ## Running tests

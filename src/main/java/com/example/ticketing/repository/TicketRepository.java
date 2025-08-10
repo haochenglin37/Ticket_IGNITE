@@ -4,7 +4,11 @@ import com.example.ticketing.model.Ticket;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.springframework.stereotype.Repository;
+
 import javax.cache.Cache;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Repository
 public class TicketRepository {
@@ -35,5 +39,16 @@ public class TicketRepository {
             }
         }
         return null;
+    }
+
+    public List<Ticket> findByCustomer(String customer) {
+        List<Ticket> tickets = new ArrayList<>();
+        for (Cache.Entry<Long, Ticket> entry : cache) {
+            Ticket ticket = entry.getValue();
+            if (customer.equals(ticket.getCustomer())) {
+                tickets.add(ticket);
+            }
+        }
+        return tickets;
     }
 }
