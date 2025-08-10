@@ -3,6 +3,34 @@
 Proof-of-concept ticketing service that uses Apache Ignite as a
 distributed data store.
 
+
+## Tech stack
+
+- Java 17
+- Spring Boot 2.7.18
+- Apache Ignite 2.15
+- REST + JSON
+- Maven for build
+- JUnit 5 for tests
+
+## Project structure
+
+```text
+ticketing-ignite/
+├── pom.xml
+└── src
+    ├── main/java/com/example/ticketing
+    │   ├── TicketingApplication.java
+    │   ├── config/
+    │   ├── model/
+    │   ├── repository/
+    │   ├── service/
+    │   └── web/
+    └── test/java/com/example/ticketing
+        ├── service/
+        └── web/
+```
+
 ## Prerequisites
 
 - Java 17+

@@ -4,7 +4,6 @@ import com.example.ticketing.model.Seat;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.springframework.stereotype.Repository;
-
 import javax.cache.Cache;
 import java.util.ArrayList;
 import java.util.List;

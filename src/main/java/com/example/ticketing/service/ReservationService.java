@@ -5,7 +5,6 @@ import com.example.ticketing.model.Ticket;
 import com.example.ticketing.repository.SeatRepository;
 import com.example.ticketing.repository.TicketRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.UUID;
 

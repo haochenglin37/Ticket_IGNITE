@@ -50,10 +50,12 @@ document.getElementById('loadSeats').addEventListener('click', async function() 
     seatsDiv.textContent = 'Loading...';
     try {
         const response = await fetch(`/events/${eventId}/seats`);
+  
         if (!response.ok) {
             const text = await response.text();
             throw new Error(text || response.status);
         }
+
         const seats = await response.json();
         seatsDiv.innerHTML = '';
         seats.forEach(seat => {
@@ -128,7 +130,6 @@ document.getElementById('cancelForm').addEventListener('submit', async function(
         result.textContent = 'Error: ' + err.message;
     }
 });
-
 </script>
 </body>
 </html>

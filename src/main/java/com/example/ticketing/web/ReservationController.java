@@ -4,9 +4,7 @@ import com.example.ticketing.model.Seat;
 import com.example.ticketing.model.Ticket;
 import com.example.ticketing.service.ReservationService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 
 @RestController
 public class ReservationController {
