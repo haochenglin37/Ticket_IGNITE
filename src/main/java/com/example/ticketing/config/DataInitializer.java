@@ -23,7 +23,12 @@ public class DataInitializer {
         Event event = new Event(1L, "Demo Event");
         eventRepository.save(event);
 
-        seatRepository.save(new Seat(1L, 1L, "A1", false));
-        seatRepository.save(new Seat(2L, 1L, "A2", false));
+        long seatId = 1L;
+        for (char row = 'A'; row <= 'J'; row++) {
+            for (int number = 1; number <= 10; number++) {
+                String seatNumber = row + String.valueOf(number);
+                seatRepository.save(new Seat(seatId++, event.getId(), seatNumber, false));
+            }
+        }
     }
 }
