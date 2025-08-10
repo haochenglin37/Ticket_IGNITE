@@ -10,7 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import java.util.Arrays;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -93,5 +94,16 @@ class ReservationServiceTest {
 
         verify(seatRepository, never()).save(any());
         verify(ticketRepository, never()).delete(anyLong());
+    }
+
+    @Test
+    void getSeatsByEventReturnsSeats() {
+        List<Seat> seats = Arrays.asList(new Seat(1L, 1L, "A1", false),
+                                         new Seat(2L, 1L, "A2", true));
+        when(seatRepository.findByEventId(1L)).thenReturn(seats);
+
+        List<Seat> result = reservationService.getSeatsByEvent(1L);
+
+        assertEquals(seats, result);
     }
 }

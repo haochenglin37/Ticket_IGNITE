@@ -5,15 +5,27 @@
     <title>Ticket Reservation</title>
 </head>
 <body>
-<h1>Reserve a Seat</h1>
-<form id="reservationForm">
-    <label>Event ID: <input type="number" id="eventId" required></label><br>
-    <label>Seat ID: <input type="number" id="seatId" required></label><br>
-    <label>Customer: <input type="text" id="customer" required></label><br>
-    <button type="submit">Reserve</button>
-</form>
-<pre id="result"></pre>
+<style>
+    #seats {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+        gap: 5px;
+        max-width: 400px;
+    }
 
+    #seats button.reserved {
+        background-color: #ccc;
+    }
+</style>
+
+<h1>Reserve a Seat</h1>
+<form id="reservationForm" onsubmit="return false;">
+    <label>Event ID: <input type="number" id="eventId" required></label><br>
+    <label>Customer: <input type="text" id="customer" required></label><br>
+    <button type="button" id="loadSeats">Load Seats</button>
+</form>
+<div id="seats"></div>
+<pre id="result"></pre>
 <h2>Check Seat</h2>
 <form id="checkForm">
     <label>Event ID: <input type="number" id="checkEventId" required></label><br>
@@ -29,26 +41,53 @@
     <button type="submit">Cancel</button>
 </form>
 <pre id="cancelResult"></pre>
+
 <script>
-document.getElementById('reservationForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+document.getElementById('loadSeats').addEventListener('click', async function() {
     const eventId = document.getElementById('eventId').value;
-    const seatId = document.getElementById('seatId').value;
-    const customer = document.getElementById('customer').value;
+    const seatsDiv = document.getElementById('seats');
     const result = document.getElementById('result');
-    result.textContent = 'Reserving...';
+    seatsDiv.textContent = 'Loading...';
     try {
-        const response = await fetch(`/events/${eventId}/seats/${seatId}/reserve?customer=${encodeURIComponent(customer)}`, {
-            method: 'POST'
-        });
+        const response = await fetch(`/events/${eventId}/seats`);
+  
         if (!response.ok) {
             const text = await response.text();
             throw new Error(text || response.status);
         }
-        const ticket = await response.json();
-        result.textContent = JSON.stringify(ticket, null, 2);
+
+        const seats = await response.json();
+        seatsDiv.innerHTML = '';
+        seats.forEach(seat => {
+            const btn = document.createElement('button');
+            btn.textContent = seat.number || seat.id;
+            btn.disabled = seat.reserved;
+            if (seat.reserved) {
+                btn.classList.add('reserved');
+            }
+            btn.addEventListener('click', async () => {
+                const customer = document.getElementById('customer').value;
+                result.textContent = 'Reserving...';
+                try {
+                    const res = await fetch(`/events/${eventId}/seats/${seat.id}/reserve?customer=${encodeURIComponent(customer)}`, {
+                        method: 'POST'
+                    });
+                    if (!res.ok) {
+                        const text = await res.text();
+                        throw new Error(text || res.status);
+                    }
+                    const ticket = await res.json();
+                    result.textContent = JSON.stringify(ticket, null, 2);
+                    btn.disabled = true;
+                    btn.classList.add('reserved');
+                } catch (err) {
+                    result.textContent = 'Error: ' + err.message;
+                }
+            });
+            seatsDiv.appendChild(btn);
+        });
     } catch (err) {
-        result.textContent = 'Error: ' + err.message;
+        seatsDiv.textContent = 'Error: ' + err.message;
     }
 });
 

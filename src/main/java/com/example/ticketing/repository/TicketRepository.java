@@ -4,7 +4,6 @@ import com.example.ticketing.model.Ticket;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.springframework.stereotype.Repository;
-
 import javax.cache.Cache;
 
 @Repository

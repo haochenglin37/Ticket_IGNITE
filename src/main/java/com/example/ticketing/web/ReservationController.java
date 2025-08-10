@@ -4,6 +4,7 @@ import com.example.ticketing.model.Seat;
 import com.example.ticketing.model.Ticket;
 import com.example.ticketing.service.ReservationService;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 public class ReservationController {
@@ -25,6 +26,11 @@ public class ReservationController {
     public Seat getSeat(@PathVariable Long eventId,
                         @PathVariable Long seatId) {
         return reservationService.getSeat(eventId, seatId);
+    }
+
+    @GetMapping("/events/{eventId}/seats")
+    public List<Seat> getSeats(@PathVariable Long eventId) {
+        return reservationService.getSeatsByEvent(eventId);
     }
 
     @PostMapping("/events/{eventId}/seats/{seatId}/cancel")
