@@ -8,6 +8,7 @@ import org.apache.ignite.cache.query.ScanQuery;
 import javax.cache.Cache;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Repository;
 
 @Repository
