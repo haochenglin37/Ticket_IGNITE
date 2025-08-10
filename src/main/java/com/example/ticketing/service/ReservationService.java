@@ -6,6 +6,7 @@ import com.example.ticketing.repository.SeatRepository;
 import com.example.ticketing.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -42,6 +43,10 @@ public class ReservationService {
             throw new IllegalStateException("Seat not found");
         }
         return seat;
+    }
+
+    public List<Seat> getSeatsByEvent(Long eventId) {
+        return seatRepository.findByEventId(eventId);
     }
 
     public Seat cancelSeat(Long eventId, Long seatId) {

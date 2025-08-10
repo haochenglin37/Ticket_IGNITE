@@ -10,6 +10,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -76,5 +79,17 @@ class ReservationControllerTest {
 
         mockMvc.perform(post("/events/1/seats/1/cancel"))
                 .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void getSeatsReturnsSeatList() throws Exception {
+        List<Seat> seats = Arrays.asList(new Seat(1L, 1L, "A1", false),
+                                         new Seat(2L, 1L, "A2", true));
+        when(reservationService.getSeatsByEvent(1L)).thenReturn(seats);
+
+        mockMvc.perform(get("/events/1/seats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(1L));
     }
 }
