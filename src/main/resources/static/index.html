@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Reservation</title>
+</head>
+<body>
+<h1>Register</h1>
+<form id="registerForm">
+    <label>Username: <input type="text" id="regUsername" required></label><br>
+    <label>Password: <input type="password" id="regPassword" required></label><br>
+    <button type="submit">Register</button>
+</form>
+<pre id="registerResult"></pre>
+
+<h1>Login</h1>
+<form id="loginForm">
+    <label>Username: <input type="text" id="username" required></label><br>
+    <label>Password: <input type="password" id="password" required></label><br>
+    <button type="submit">Login</button>
+</form>
+<pre id="loginResult"></pre>
+
+<h2>Reserve a Seat</h2>
+<form id="reservationForm">
+    <label>Event ID: <input type="number" id="eventId" required></label><br>
+    <label>Seat ID: <input type="number" id="seatId" required></label><br>
+    <button type="submit">Reserve</button>
+</form>
+<pre id="result"></pre>
+
+<h2>Check Seat</h2>
+<form id="checkForm">
+    <label>Event ID: <input type="number" id="checkEventId" required></label><br>
+    <label>Seat ID: <input type="number" id="checkSeatId" required></label><br>
+    <button type="submit">Check</button>
+    </form>
+<pre id="checkResult"></pre>
+
+<h2>Cancel Reservation</h2>
+<form id="cancelForm">
+    <label>Event ID: <input type="number" id="cancelEventId" required></label><br>
+    <label>Seat ID: <input type="number" id="cancelSeatId" required></label><br>
+    <button type="submit">Cancel</button>
+</form>
+<pre id="cancelResult"></pre>
+
+<h2>My Tickets</h2>
+<button id="listTickets">List My Tickets</button>
+<pre id="ticketsResult"></pre>
+
+<h2>Cancel My Ticket</h2>
+<form id="cancelTicketForm">
+    <label>Ticket ID: <input type="number" id="ticketId" required></label><br>
+    <button type="submit">Cancel Ticket</button>
+</form>
+<pre id="cancelTicketResult"></pre>
+
+<h2>Admin: Create Event</h2>
+<form id="createEventForm">
+    <label>Name: <input type="text" id="eventName" required></label><br>
+    <label>Seats: <input type="number" id="seatCount" required></label><br>
+    <button type="submit">Create</button>
+    </form>
+<pre id="createEventResult"></pre>
+
+<h2>Admin: List Seats</h2>
+<form id="listSeatsForm">
+    <label>Event ID: <input type="number" id="listEventId" required></label><br>
+    <button type="submit">List</button>
+</form>
+<pre id="listSeatsResult"></pre>
+
+<h2>Admin: Update Seat</h2>
+<form id="updateSeatForm">
+    <label>Seat ID: <input type="number" id="updateSeatId" required></label><br>
+    <label>Reserved: <input type="checkbox" id="updateReserved"></label><br>
+    <button type="submit">Update</button>
+</form>
+<pre id="updateSeatResult"></pre>
+<script>
+let authHeader = '';
+
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const user = document.getElementById("regUsername").value;
+    const pass = document.getElementById("regPassword").value;
+    const result = document.getElementById("registerResult");
+    try {
+        const resp = await fetch("/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: user, password: pass })
+        });
+        if (!resp.ok) {
+            const text = await resp.text();
+            throw new Error(text || resp.status);
+        }
+        result.textContent = "Registered";
+    } catch (err) {
+        result.textContent = "Error: " + err.message;
+    }
+});
+
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+    authHeader = 'Basic ' + btoa(user + ':' + pass);
+    document.getElementById('loginResult').textContent = 'Logged in as ' + user;
+});
+
+document.getElementById('reservationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const eventId = document.getElementById('eventId').value;
+    const seatId = document.getElementById('seatId').value;
+    const result = document.getElementById('result');
+    result.textContent = 'Reserving...';
+    try {
+        const response = await fetch(`/events/${eventId}/seats/${seatId}/reserve`, {
+            method: 'POST',
+            headers: { 'Authorization': authHeader }
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const ticket = await response.json();
+        result.textContent = JSON.stringify(ticket, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+
+document.getElementById('checkForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const eventId = document.getElementById('checkEventId').value;
+    const seatId = document.getElementById('checkSeatId').value;
+    const result = document.getElementById('checkResult');
+    result.textContent = 'Checking...';
+    try {
+        const response = await fetch(`/events/${eventId}/seats/${seatId}`, {
+            headers: { 'Authorization': authHeader }
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const seat = await response.json();
+        result.textContent = JSON.stringify(seat, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+
+document.getElementById('cancelForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const eventId = document.getElementById('cancelEventId').value;
+    const seatId = document.getElementById('cancelSeatId').value;
+    const result = document.getElementById('cancelResult');
+    result.textContent = 'Cancelling...';
+    try {
+        const response = await fetch(`/events/${eventId}/seats/${seatId}/cancel`, {
+            method: 'POST',
+            headers: { 'Authorization': authHeader }
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const seat = await response.json();
+        result.textContent = JSON.stringify(seat, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+
+document.getElementById('listTickets').addEventListener('click', async function() {
+    const result = document.getElementById('ticketsResult');
+    result.textContent = 'Loading...';
+    try {
+        const response = await fetch('/me/tickets', {
+            headers: { 'Authorization': authHeader }
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const tickets = await response.json();
+        result.textContent = JSON.stringify(tickets, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+
+document.getElementById('cancelTicketForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const ticketId = document.getElementById('ticketId').value;
+    const result = document.getElementById('cancelTicketResult');
+    result.textContent = 'Cancelling...';
+    try {
+        const response = await fetch(`/me/tickets/${ticketId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': authHeader }
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        result.textContent = 'Cancelled';
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+
+document.getElementById('createEventForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const name = document.getElementById('eventName').value;
+    const seats = parseInt(document.getElementById('seatCount').value, 10);
+    const result = document.getElementById('createEventResult');
+    result.textContent = 'Creating...';
+    try {
+        const response = await fetch('/admin/events', {
+            method: 'POST',
+            headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, seatCount: seats })
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const event = await response.json();
+        result.textContent = JSON.stringify(event, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+
+document.getElementById('listSeatsForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const eventId = document.getElementById('listEventId').value;
+    const result = document.getElementById('listSeatsResult');
+    result.textContent = 'Loading...';
+    try {
+        const response = await fetch(`/admin/events/${eventId}/seats`, {
+            headers: { 'Authorization': authHeader }
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const seats = await response.json();
+        result.textContent = JSON.stringify(seats, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+
+document.getElementById('updateSeatForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const seatId = document.getElementById('updateSeatId').value;
+    const reserved = document.getElementById('updateReserved').checked;
+    const result = document.getElementById('updateSeatResult');
+    result.textContent = 'Updating...';
+    try {
+        const response = await fetch(`/admin/seats/${seatId}`, {
+            method: 'PUT',
+            headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reserved: reserved })
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || response.status);
+        }
+        const seat = await response.json();
+        result.textContent = JSON.stringify(seat, null, 2);
+    } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+    }
+});
+</script>
+</body>
+</html>
