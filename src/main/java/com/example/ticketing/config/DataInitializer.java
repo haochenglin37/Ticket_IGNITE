@@ -8,7 +8,6 @@ import com.example.ticketing.repository.SeatRepository;
 import com.example.ticketing.repository.UserRepository;
 import javax.annotation.PostConstruct;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Component;
 
 @Component

@@ -20,6 +20,7 @@
     <button type="submit">Login</button>
 </form>
 <pre id="loginResult"></pre>
+<div id="userSection" style="display:none;">
 
 <h2>Reserve a Seat</h2>
 <form id="reservationForm">
@@ -28,7 +29,6 @@
     <button type="submit">Reserve</button>
 </form>
 <pre id="result"></pre>
-
 
 <h2>Check Seat</h2>
 <form id="checkForm">
@@ -56,6 +56,9 @@
     <button type="submit">Cancel Ticket</button>
 </form>
 <pre id="cancelTicketResult"></pre>
+</div>
+
+<div id="adminSection" style="display:none;">
 
 <h2>Admin: Create Event</h2>
 <form id="createEventForm">
@@ -79,6 +82,8 @@
     <button type="submit">Update</button>
 </form>
 <pre id="updateSeatResult"></pre>
+</div>
+
 <script>
 let authHeader = '';
 
@@ -103,12 +108,28 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 });
 
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const user = document.getElementById('username').value;
     const pass = document.getElementById('password').value;
     authHeader = 'Basic ' + btoa(user + ':' + pass);
-    document.getElementById('loginResult').textContent = 'Logged in as ' + user;
+    const resultEl = document.getElementById('loginResult');
+    try {
+        const resp = await fetch('/me', { headers: { 'Authorization': authHeader } });
+        if (!resp.ok) {
+            throw new Error('Login failed');
+        }
+        const me = await resp.json();
+        resultEl.textContent = 'Logged in as ' + me.username;
+        document.getElementById('userSection').style.display = 'block';
+        if (me.role === 'ADMIN') {
+            document.getElementById('adminSection').style.display = 'block';
+        } else {
+            document.getElementById('adminSection').style.display = 'none';
+        }
+    } catch (err) {
+        resultEl.textContent = 'Error: ' + err.message;
+    }
 });
 
 document.getElementById('reservationForm').addEventListener('submit', async function(e) {

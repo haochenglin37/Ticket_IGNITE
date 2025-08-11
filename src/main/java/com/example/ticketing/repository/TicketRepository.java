@@ -9,7 +9,6 @@ import javax.cache.Cache;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Repository
 public class TicketRepository {
 

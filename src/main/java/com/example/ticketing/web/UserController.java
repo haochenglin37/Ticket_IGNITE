@@ -2,11 +2,13 @@ package com.example.ticketing.web;
 
 import com.example.ticketing.model.User;
 import com.example.ticketing.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 
@@ -30,5 +32,11 @@ public class UserController {
         User user = new User(userRepository.nextId(), username, passwordEncoder.encode(password), "USER");
         userRepository.save(user);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/me")
+    public Map<String, String> me(Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName());
+        return Map.of("username", user.getUsername(), "role", user.getRole());
     }
 }

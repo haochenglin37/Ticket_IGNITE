@@ -3,7 +3,6 @@
 Proof-of-concept ticketing service that uses Apache Ignite as a
 distributed data store.
 
-
 ## Tech stack
 
 - Java 17
@@ -11,7 +10,6 @@ distributed data store.
 - Apache Ignite 2.15
 - REST + JSON
 - HTTP Basic authentication
-
 - Maven for build
 - JUnit 5 for tests
 
@@ -85,7 +83,6 @@ ticketing-ignite/
    On success, the service returns a JSON representation of the seat or
    ticket. Invalid operations yield an error response.
 
-
    Admin endpoints allow creating events and managing seats:
 
    ```bash
@@ -98,15 +95,18 @@ ticketing-ignite/
    curl -u admin:admin -H "Content-Type: application/json" \
      -d '{"reserved":false}' -X PUT "http://localhost:8080/admin/seats/{seatId}"
    ```
+   
+3. A simple web page is available for manual testing without prior authentication:
 
-3. A simple web page is available for manual testing:
 
    ```
    http://localhost:8080/index.html
    ```
 
-   Use the login form first, then manage reservations through the provided
-   forms to reserve seats, view your tickets and cancel them.
+   Log in using the `admin/admin` account or a registered user. After login the
+   page reveals user features for checking seats, reserving, listing and
+   cancelling tickets. Admins receive additional forms for creating events and
+   managing seats.
 
 
 ## Running tests
