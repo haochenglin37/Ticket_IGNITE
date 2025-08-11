@@ -4,6 +4,7 @@ import com.example.ticketing.model.User;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteAtomicSequence;
+
 import org.apache.ignite.cache.query.ScanQuery;
 import org.springframework.stereotype.Repository;
 

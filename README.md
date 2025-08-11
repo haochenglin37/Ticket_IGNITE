@@ -98,6 +98,7 @@ ticketing-ignite/
 
 3. A simple web page is available for manual testing without prior authentication:
 
+
    ```
    http://localhost:8080/index.html
    ```

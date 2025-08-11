@@ -6,6 +6,7 @@ import com.example.ticketing.model.User;
 import com.example.ticketing.repository.UserRepository;
 import com.example.ticketing.service.ReservationService;
 import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ReservationController.class)
+
 @Import(com.example.ticketing.config.SecurityConfig.class)
 class ReservationControllerTest {
 
