@@ -95,7 +95,7 @@ ticketing-ignite/
    curl -u admin:admin -H "Content-Type: application/json" \
      -d '{"reserved":false}' -X PUT "http://localhost:8080/admin/seats/{seatId}"
    ```
-   
+
 3. A simple web page is available for manual testing without prior authentication:
 
 
@@ -107,7 +107,6 @@ ticketing-ignite/
    page reveals user features for checking seats, reserving, listing and
    cancelling tickets. Admins receive additional forms for creating events and
    managing seats.
-
 
 ## Running tests
 
