@@ -3,7 +3,7 @@ package com.example.ticketing.repository;
 import com.example.ticketing.model.Seat;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
-import org.apache.ignite.atomic.IgniteAtomicSequence;
+import org.apache.ignite.IgniteAtomicSequence;
 import org.apache.ignite.cache.query.ScanQuery;
 import javax.cache.Cache;
 import java.util.List;
